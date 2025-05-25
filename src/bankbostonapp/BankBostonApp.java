@@ -23,23 +23,20 @@ public class BankBostonApp {
     public static void main(String[] args) throws java.io.UnsupportedEncodingException {
         // TODO code application logic here
         System.setOut(new java.io.PrintStream(System.out, true, "UTF-8"));
-        clientes.add(new Cliente("11.111.111-1", "Juan", "Perez", "Gomez", "Calle falsa 123", "Temuco", 123456789));
-        clientes.add(new Cliente("22.222.222-2", "Juan", "Perez", "Gomez", "Calle falsa 123", "Temuco", 123456789));
+        //Clientes de Prueba
+        //clientes.add(new Cliente("11.111.111-1", "Juan", "Perez", "Gomez", "Calle falsa 123", "Temuco", 123456789));
+        //clientes.add(new Cliente("22.222.222-2", "Juan", "Perez", "Gomez", "Calle falsa 123", "Temuco", 123456789));
         int opcion;
-
         do {
             System.out.println("Bienvenido a Bank Boston");
             System.out.println("Menu Principal");
             System.out.println("1.-Registrar Cliente");
-            System.out.println("2.-Ver datos del Cliente");
-            System.out.println("3.-Depositar");
-            System.out.println("4.-Girar");
-            System.out.println("5.-Consultar Saldo");
-            System.out.println("6.-Salir");
-            opcion = valorValido(1, 6);
+            System.out.println("2.-Iniciar Sesion Cliente");
+            System.out.println("3.-Salir");
+            opcion = valorValido(1, 3);
 
             switch (opcion) {
-                case 1:
+                case 1: {
                     String rut;
                     do {
                         System.out.print("RUT: ");
@@ -48,72 +45,85 @@ public class BankBostonApp {
                             System.out.println("RUT invalido. Debe tener entre 11 y 12 caracteres");
                         }
                     } while (rut.length() < 11 || rut.length() > 12);
-                    System.out.print("Nombre: ");
-                    String nombre = scanner.nextLine().trim();
-                    System.out.print("Apellido Paterno: ");
-                    String apellidoPaterno = scanner.nextLine().trim();
-                    System.out.print("Apellido Materno: ");
-                    String apellidoPMaterno = scanner.nextLine().trim();
-                    System.out.print("Domicilio: ");
-                    String domicilio = scanner.nextLine().trim();
-                    System.out.print("Comuna: ");
-                    String comuna = scanner.nextLine().trim();
-                    System.out.print("Telefono: ");
-                    int telefono = valorValido(0, -1);
-                    clientes.add(new Cliente(rut, nombre, apellidoPaterno, apellidoPMaterno, domicilio, comuna, telefono));
-                    
-                    break;
-                case 2:{
-                    Cliente encontrado = buscarCliente();
-                    if (encontrado != null) {
-                        encontrado.mostrarDatos();
+                    Cliente duplicado = buscarClienteRut(rut);
+                    if (duplicado != null) {
+                        System.out.println("El cliente ya tiene una cuenta contratada: " + duplicado.getCuenta().getNumeroCuenta());
                     } else {
-                        System.out.println("El numero de cuenta no se encuentra registrado");
+                        System.out.print("Nombre: ");
+                        String nombre = scanner.nextLine().trim();
+                        System.out.print("Apellido Paterno: ");
+                        String apellidoPaterno = scanner.nextLine().trim();
+                        System.out.print("Apellido Materno: ");
+                        String apellidoPMaterno = scanner.nextLine().trim();
+                        System.out.print("Domicilio: ");
+                        String domicilio = scanner.nextLine().trim();
+                        System.out.print("Comuna: ");
+                        String comuna = scanner.nextLine().trim();
+                        System.out.print("Telefono: ");
+                        int telefono = valorValido(0, -1);
+                        clientes.add(new Cliente(rut, nombre, apellidoPaterno, apellidoPMaterno, domicilio, comuna, telefono));
                     }
+
                     break;
                 }
-                case 3: {
-                    Cliente encontrado = buscarCliente();
+                case 2: {
+                    Cliente encontrado = buscarClienteCuenta();
                     if (encontrado != null) {
-                        int monto = 0;
                         do {
-                            System.out.print("Ingrese el monto a depositar: ");
-                            monto = valorValido(1, -1);
-                        } while (monto <= 0);
-                        encontrado.getCuenta().depositar(monto);
+                            System.out.println("Sesion Iniciada");
+                            System.out.println("1.-Ver datos del Cliente");
+                            System.out.println("2.-Depositar");
+                            System.out.println("3.-Girar");
+                            System.out.println("4.-Consultar Saldo");
+                            System.out.println("5.-Salir");
+                            opcion = valorValido(1, 5);
+                            switch (opcion) {
+                                case 1:
+                                    encontrado.mostrarDatos();
+                                    break;
+                                case 2: {
+                                    int monto = 0;
+                                    do {
+                                        System.out.print("Ingrese el monto a depositar: ");
+                                        monto = valorValido(1, -1);
+                                    } while (monto <= 0);
+                                    encontrado.getCuenta().depositar(monto);
+                                    break;
+                                }
+                                case 3: {
+                                    int monto = 0;
+                                    if (encontrado.getCuenta().getSaldo() == 0) {
+                                        System.out.println("No se puede realizar giros. Tiene un saldo de 0 pesos");
+                                    } else {
+                                        do {
+                                            System.out.print("Ingrese el monto a girar: ");
+                                            monto = valorValido(1, -1);
+                                        } while (monto <= 0);
+                                        encontrado.getCuenta().girar(monto);
+                                    }
+                                    break;
+                                }
+                                case 4:
+                                    int saldo = encontrado.getCuenta().getSaldo();
+                                    System.out.println("Saldo actual: " + saldo + " pesos.");
+                                    break;
+                                case 5:
+                                    System.out.println("Sesion cerrada");
+                                    break;
+                            }
+
+                        } while (opcion != 5);
                     } else {
                         System.out.println("El numero de cuenta no se encuentra registrado");
                     }
+
                     break;
                 }
-                case 4: {
-                    Cliente encontrado = buscarCliente();
-                    if (encontrado != null) {
-                        int monto = 0;
-                        do {
-                            System.out.print("Ingrese el monto a girar: ");
-                            monto = valorValido(1, -1);
-                        } while (monto <= 0);
-                        encontrado.getCuenta().girar(monto);
-                    } else {
-                        System.out.println("El numero de cuenta no se encuentra registrado");
-                    }
-                    break;
-                }
-                case 5:{
-                    Cliente encontrado = buscarCliente();
-                    if (encontrado != null) {
-                        encontrado.getCuenta().getSaldo();
-                    } else {
-                        System.out.println("El numero de cuenta no se encuentra registrado");
-                    }
-                    break;
-                }
-                case 6:
+                case 3:
                     System.out.println("Gracias por su preferencia");
                     break;
             }
-        } while (opcion != 6);
+        } while (opcion != 3);
     }
 
     public static int valorValido(int min, int max) {
@@ -146,7 +156,7 @@ public class BankBostonApp {
         return 0;
     }
 
-    public static Cliente buscarCliente() {
+    public static Cliente buscarClienteCuenta() {
         int numeroCuenta;
         do {
             System.out.print("Numero de Cuenta (9 digitos): ");
@@ -160,4 +170,13 @@ public class BankBostonApp {
         }
         return null;
     }
+    public static Cliente buscarClienteRut(String rut) {
+        for (Cliente cliente : clientes) {
+            if (cliente.getRut().equalsIgnoreCase(rut)) {
+                return cliente;
+            }
+        }
+        return null;
+    }
+
 }
