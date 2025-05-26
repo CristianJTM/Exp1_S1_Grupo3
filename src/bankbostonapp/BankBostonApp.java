@@ -23,9 +23,11 @@ public class BankBostonApp {
     public static void main(String[] args) throws java.io.UnsupportedEncodingException {
         // TODO code application logic here
         System.setOut(new java.io.PrintStream(System.out, true, "UTF-8"));
+
         //Clientes de Prueba
         //clientes.add(new Cliente("11.111.111-1", "Juan", "Perez", "Gomez", "Calle falsa 123", "Temuco", 123456789));
         //clientes.add(new Cliente("22.222.222-2", "Juan", "Perez", "Gomez", "Calle falsa 123", "Temuco", 123456789));
+        
         int opcion;
         do {
             System.out.println("Bienvenido a Bank Boston");
@@ -39,10 +41,10 @@ public class BankBostonApp {
                 case 1: {
                     String rut;
                     do {
-                        System.out.print("RUT: ");
+                        System.out.print("RUT (Ej:11.111.111-1): ");
                         rut = scanner.nextLine().trim();
                         if (rut.length() < 11 || rut.length() > 12) {
-                            System.out.println("RUT invalido. Debe tener entre 11 y 12 caracteres");
+                            System.out.println("RUT invalido. Debe tener entre 11 y 12 caracteres incluyendo puntos y guion.");
                         }
                     } while (rut.length() < 11 || rut.length() > 12);
                     Cliente duplicado = buscarClienteRut(rut);
@@ -70,7 +72,7 @@ public class BankBostonApp {
                     Cliente encontrado = buscarClienteCuenta();
                     if (encontrado != null) {
                         do {
-                            System.out.println("Sesion Iniciada");
+                            System.out.println("Sesion Iniciada. N°Cuenta: " + encontrado.getCuenta().getNumeroCuenta());
                             System.out.println("1.-Ver datos del Cliente");
                             System.out.println("2.-Depositar");
                             System.out.println("3.-Girar");
@@ -170,6 +172,7 @@ public class BankBostonApp {
         }
         return null;
     }
+
     public static Cliente buscarClienteRut(String rut) {
         for (Cliente cliente : clientes) {
             if (cliente.getRut().equalsIgnoreCase(rut)) {

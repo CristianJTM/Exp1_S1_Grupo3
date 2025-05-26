@@ -37,7 +37,7 @@ public class CuentaCorriente {
         System.out.println("Usted tiene un saldo actual de " + saldo + " pesos.");
     }
 
-        public void girar(int monto) {
+    public void girar(int monto) {
         if (monto > saldo) {
             System.out.println("No se puede realizar el giro. Saldo insuficiente");
         } else {
